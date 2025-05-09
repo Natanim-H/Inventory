@@ -14,48 +14,42 @@ $types = "";
 
 if (isset($_GET['search'])) {
     $search = "%" . $_GET['search'] . "%";
-    $where_conditions[] = "(i.name LIKE ? OR i.description LIKE ?)";
+    $where_conditions[] = "(p.name LIKE ? OR p.description LIKE ?)";
     $params[] = $search;
     $params[] = $search;
     $types .= "ss";
 }
 
 if (isset($_GET['category_id']) && $_GET['category_id'] != '') {
-    $where_conditions[] = "i.category_id = ?";
+    $where_conditions[] = "p.category_id = ?";
     $params[] = $_GET['category_id'];
     $types .= "i";
 }
 
 if (isset($_GET['supplier_id']) && $_GET['supplier_id'] != '') {
-    $where_conditions[] = "i.supplier_id = ?";
+    $where_conditions[] = "p.supplier_id = ?";
     $params[] = $_GET['supplier_id'];
     $types .= "i";
 }
 
 if (isset($_GET['stock_level']) && $_GET['stock_level'] != '') {
-    $where_conditions[] = "i.stock_level = ?";
+    $where_conditions[] = "p.stock_level = ?";
     $params[] = $_GET['stock_level'];
     $types .= "s";
 }
 
 if (isset($_GET['condition']) && $_GET['condition'] != '') {
-    $where_conditions[] = "i.`condition` = ?";
+    $where_conditions[] = "p.`condition` = ?";
     $params[] = $_GET['condition'];
     $types .= "s";
 }
 
 // Base query
-$query = "SELECT i.*, c.name as category_name, s.name as supplier_name 
-          FROM items i 
-          LEFT JOIN categories c ON i.category_id = c.id 
-          LEFT JOIN suppliers s ON i.supplier_id = s.id";
-
-// Add where conditions if any
+$query = "SELECT * FROM products";
 if (!empty($where_conditions)) {
     $query .= " WHERE " . implode(" AND ", $where_conditions);
 }
-
-$query .= " ORDER BY i.name";
+$query .= " ORDER BY name";
 
 // Prepare and execute query
 $stmt = $conn->prepare($query);
@@ -129,39 +123,39 @@ $user_role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
-                    <th>Category</th>
-                    <th>Supplier</th>
                     <th>Quantity</th>
-                    <th>Unit Price</th>
+                    <th>Price</th>
                     <th>Stock Level</th>
                     <th>Condition</th>
-                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'store_keeper'): ?>
+                    <?php if (
+                        $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'store_keeper'
+                    ): ?>
                     <th>Actions</th>
                     <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($item = $result->fetch_assoc()): ?>
+                <?php while ($product = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($item['name']); ?></td>
-                    <td><?php echo htmlspecialchars($item['description']); ?></td>
-                    <td><?php echo htmlspecialchars($item['category_name']); ?></td>
-                    <td><?php echo htmlspecialchars($item['supplier_name']); ?></td>
-                    <td><?php echo $item['quantity']; ?></td>
-                    <td><?php echo number_format($item['unit_price'], 2); ?></td>
-                    <td class="<?php echo $item['stock_level']; ?>">
+                    <td><?php echo htmlspecialchars($product['name']); ?></td>
+                    <td><?php echo htmlspecialchars($product['description']); ?></td>
+                    <td><?php echo $product['quantity']; ?></td>
+                    <td><?php echo isset($product['price']) ? number_format($product['price'], 2) : '-'; ?></td>
+                    <td class="<?php echo $product['stock_level']; ?>">
                         <?php 
-                        echo ucwords(str_replace('_', ' ', $item['stock_level']));
-                        if ($item['stock_level'] == 'low_stock') {
-                            echo " (Min: " . $item['min_stock_level'] . ")";
+                        echo ucwords(str_replace('_', ' ', $product['stock_level']));
+                        if ($product['stock_level'] == 'low_stock') {
+                            echo " (Min: " . $product['min_stock_level'] . ")";
                         }
                         ?>
                     </td>
-                    <td><?php echo ucfirst($item['condition']); ?></td>
-                    <?php if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'store_keeper'): ?>
+                    <td><?php echo ucfirst($product['condition']); ?></td>
+                    <?php if (
+                        $_SESSION['role'] === 'admin' || $_SESSION['role'] === 'store_keeper'
+                    ): ?>
                     <td>
-                        <a href="edit_product.php?id=<?php echo $item['id']; ?>" class="button">Edit</a>
-                        <a href="delete_product.php?id=<?php echo $item['id']; ?>" class="button" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
+                        <a href="edit_product.php?id=<?php echo $product['id']; ?>" class="button" title="Edit Product" style="display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-edit"></i> Edit</a>
+                        <a href="delete_product.php?id=<?php echo $product['id']; ?>" class="button" onclick="return confirm('Are you sure you want to delete this product?')" title="Delete Product" style="display:inline-flex;align-items:center;gap:6px;color:#c62828;"><i class="fas fa-trash"></i> Delete</a>
                     </td>
                     <?php endif; ?>
                 </tr>

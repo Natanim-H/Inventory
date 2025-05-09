@@ -53,11 +53,16 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
+    <title>Dashboard - Inventory Management System</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="fas fa-sun"></i>
+    </button>
+    
     <div class="container">
         <header class="main-header">
             <div class="header-content">
@@ -124,8 +129,8 @@ try {
                     <span class="nav-group-title"><i class="fas fa-box"></i> Product Management</span>
                     <ul class="nav-submenu">
                         <li><a href="add_product.php" class="nav-link"><i class="fas fa-plus"></i> Add Product</a></li>
-                        <li><a href="edit_product.php" class="nav-link"><i class="fas fa-edit"></i> Edit Product</a></li>
-                        <li><a href="delete_product.php" class="nav-link"><i class="fas fa-trash"></i> Delete Product</a></li>
+                        <li><a href="select_product_to_edit.php" class="nav-link"><i class="fas fa-edit"></i> Edit Product</a></li>
+                        <!-- <li><a href="delete_product.php" class="nav-link"><i class="fas fa-trash"></i> Delete Product</a></li> -->
                     </ul>
                 </li>
                 <?php endif; ?>
@@ -194,7 +199,54 @@ try {
                 </div>
                 <?php endif; ?>
             </div>
+
+            <?php if (hasPermission('manage_items')): ?>
+                <section class="product-management" style="margin-top:40px;">
+                    <h2 style="font-size:1.5rem;margin-bottom:18px;"><i class="fas fa-box"></i> Product Management</h2>
+                    <?php
+                    $products_result = $conn->query("SELECT * FROM products ORDER BY name");
+                    ?>
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Stock Level</th>
+                                <th>Condition</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($product = $products_result->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($product['name']); ?></td>
+                                <td><?php echo htmlspecialchars($product['description']); ?></td>
+                                <td><?php echo $product['quantity']; ?></td>
+                                <td><?php echo isset($product['price']) ? number_format($product['price'], 2) : '-'; ?></td>
+                                <td class="<?php echo $product['stock_level']; ?>">
+                                    <?php 
+                                    echo ucwords(str_replace('_', ' ', $product['stock_level']));
+                                    if ($product['stock_level'] == 'low_stock') {
+                                        echo " (Min: " . $product['min_stock_level'] . ")";
+                                    }
+                                    ?>
+                                </td>
+                                <td><?php echo ucfirst($product['condition']); ?></td>
+                                <td>
+                                    <a href="edit_product.php?id=<?php echo $product['id']; ?>" class="button" title="Edit Product" style="display:inline-flex;align-items:center;gap:6px;"><i class="fas fa-edit"></i> Edit</a>
+                                    <a href="delete_product.php?id=<?php echo $product['id']; ?>" class="button" onclick="return confirm('Are you sure you want to delete this product?')" title="Delete Product" style="display:inline-flex;align-items:center;gap:6px;color:#c62828;"><i class="fas fa-trash"></i> Delete</a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </section>
+            <?php endif; ?>
         </main>
     </div>
+    
+    <script src="theme.js"></script>
 </body>
 </html> 

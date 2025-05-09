@@ -13,16 +13,23 @@ $id = $_GET['id'];
 
 // Validate that the product exists
 $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
+if (!$stmt) {
+    die("Prepare failed: " . $conn->error);
+}
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();
+if (!$result) {
+    die("Query failed: " . $stmt->error);
+}
 $product = $result->fetch_assoc();
 $stmt->close();
 
 // If product doesn't exist, redirect to index
 if (!$product) {
-    header("Location: index.php?error=product_not_found");
-    exit();
+    die("Product not found for ID: " . htmlspecialchars($id));
+    // header("Location: index.php?error=product_not_found");
+    // exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

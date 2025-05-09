@@ -68,9 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Inventory Management System</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: url('./image.jpg') no-repeat center center fixed;
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -80,18 +83,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .login-container {
-            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px var(--shadow-color);
             width: 100%;
             max-width: 400px;
             text-align: center;
         }
 
         .error {
-            background: #ffebee;
-            color: #c62828;
+            background: var(--error-bg);
+            color: var(--error-color);
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -105,13 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .form-group select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
         }
 
         .login-btn {
-            background: #667eea;
+            background: var(--btn-bg);
             color: white;
             padding: 12px 24px;
             border: none;
@@ -123,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .login-btn:hover {
-            background: #764ba2;
+            background: var(--btn-hover);
         }
 
         .role-selector {
@@ -135,30 +136,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .role-option {
             flex: 1;
             padding: 15px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--role-option-border);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .role-option.selected {
-            border-color: #667eea;
-            background: #f0f4ff;
+            border-color: var(--role-selected-border);
+            background: var(--role-selected-bg);
         }
 
         .role-option h3 {
             margin: 0 0 10px 0;
-            color: #333;
         }
 
         .role-option p {
             margin: 0;
-            color: #666;
+            opacity: 0.7;
             font-size: 14px;
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+        <i class="fas fa-sun"></i>
+    </button>
+
     <div class="login-container">
         <h1>Inventory Management System</h1>
         <h2>Mekelle University</h2>
@@ -193,10 +197,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 
+    <script src="theme.js"></script>
     <script>
         function selectRole(role) {
             document.getElementById('selectedRole').value = role;
-            // Update visual selection
             document.querySelectorAll('.role-option').forEach(option => {
                 option.classList.remove('selected');
             });
