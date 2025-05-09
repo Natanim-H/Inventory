@@ -70,9 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="theme.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
-            background: url('./image.jpg') no-repeat center center fixed;
+            background: url('./image2.jpg') no-repeat center center fixed;
             background-size: cover;
             min-height: 100vh;
             display: flex;
@@ -83,8 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .login-container {
-            padding: 40px;
+            padding-top: 100px;
+            margin-top: 150px;
+            padding: 70px;
             border-radius: 15px;
+            height: 500px;
             box-shadow: 0 10px 30px var(--shadow-color);
             width: 100%;
             max-width: 400px;
@@ -156,17 +160,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             opacity: 0.7;
             font-size: 14px;
         }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 24px;
+            margin-top: 0;
+            position: absolute;
+            top: 32px;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        .login-title h1, .login-title h2 {
+            color: #111;
+            font-weight: bold;
+        }
+        .login-title h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+            display: block;
+            font-family: 'Montserrat', Arial, sans-serif;
+            letter-spacing: 1px;
+        }
+        .login-title h2 {
+            font-size: 1.6rem;
+            margin-top: 0;
+            display: block;
+        }
     </style>
 </head>
 <body>
+    <div class="login-title">
+        <h1 style="color: #1a2be2" >Inventory Management System Of</h1>
+     
+        <h1 style="color: #1a2be2" > Mekelle University</h1>
+    </div>
     <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
         <i class="fas fa-sun"></i>
     </button>
 
     <div class="login-container">
-        <h1>Inventory Management System</h1>
-        <h2>Mekelle University</h2>
-        
         <?php if ($error_message): ?>
             <div class="error"><?php echo htmlspecialchars($error_message); ?></div>
         <?php endif; ?>
